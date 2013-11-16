@@ -19,9 +19,11 @@ public class CallBack {
         StringBuffer sb = new StringBuffer("♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥\n");
 
         //默认都一样长
+        int len = From.values().length;
         int i = 0;
         for (From from : From.values()) {
-            sb.append(from + " " + Action.values()[i] + " " + To.values()[i] + "\n");
+            int[] indexs = {(int) (Math.random() * len), (int) (Math.random() * len)};
+            sb.append(from + " " + Action.values()[indexs[0]] + " " + To.values()[indexs[1]] + "\n");
             i++;
         }
         return sb.append("♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥\n").toString();

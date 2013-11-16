@@ -38,7 +38,7 @@ public class AppHandler implements IHandler {
 
         //第二个option  //有复用，按需设计
         option = new Option();
-        option.setId("stepone");
+        option.setId("one");
         option.setPrompt("你已经知道怎么做了～");
         comm.setPrompt("再看一次演示，会有不同结果哦");
         option.addCommands(comm, comm2);
@@ -74,12 +74,13 @@ public class AppHandler implements IHandler {
 
         //把客戶端返回的 optionId:commandId 解析出來
         int split = clientMsg.indexOf(":");
+        if (split == -1) return;
         String optionId = clientMsg.substring(0, split);
         String commandId = clientMsg.substring(split + 1, clientMsg.length());
 
         ByteBuffer outBuffer = ByteBuffer.wrap(clientMsg.getBytes());
         channel.write(toByteBuffer(events.invoke(optionId, commandId)
-                + events.option("stepone").prompt
+                + events.option("one").prompt
         ));// 将消息回送给客户端
     }
 

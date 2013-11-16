@@ -29,7 +29,9 @@ public class Option {
             this.commands.put(comm.id, comm);
             pattern.append("\n" + comm.prompt);
         }
-        this.prompt += "\n" + id + pattern.toString();
+        this.prompt += "\n"
+                + "Step: " +id
+                + pattern.toString();
     }
 
     public void setId(String id) {
