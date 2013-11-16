@@ -1,4 +1,4 @@
-package live.hz.ilove.nio;
+package live.hz.ilike.server.nio;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -12,7 +12,7 @@ import java.util.Iterator;
  * User: rain
  * Date: 11/16/13
  * Time: 3:31 PM
- * To change this template use File | Settings | File Templates.
+ * email: zizihjk@gmail.com，作者是个好人
  */
 public class Server {
     //通道管理器
@@ -37,6 +37,9 @@ public class Server {
         //将通道管理器和该通道绑定，并为该通道注册SelectionKey.OP_ACCEPT事件,注册该事件后，
         //当该事件到达时，selector.select()会返回，如果该事件没到达selector.select()会一直阻塞。
         serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+
+        //init handler
+        handler = new AppHandler();
     }
 
     /**
