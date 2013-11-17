@@ -101,10 +101,9 @@ public class Log {
         public String format(LogRecord record) {
             try {
                 Event event = _gson.fromJson(record.getMessage(), Event.class);
-                event.setTime(record.getMillis());
                 //return like such: [1384519003991] rain:like:dad
                 return String.format("[%s]%s:%s:%s  detail:%s\n",
-                        record.getMillis(),
+                        event.getTime(),
                         event.getFrom().getNick(),
                         event.getAction(),
                         event.getTo().getNick(),

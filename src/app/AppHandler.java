@@ -1,7 +1,7 @@
 package app;
 
 import live.hz.ilike.server.model.Command;
-import live.hz.ilike.server.model.Events;
+import live.hz.ilike.server.model.Operates;
 import live.hz.ilike.server.model.Option;
 import live.hz.ilike.server.nio.IHandler;
 
@@ -21,10 +21,10 @@ import java.nio.channels.SocketChannel;
  */
 public class AppHandler implements IHandler {
 
-    private Events events;
+    private Operates operates;
 
     public AppHandler() {
-        events = new Events();
+        operates = new Operates();
         Option init, one, two, thr;
         Command demo, todo, exit, regist, show;
 
@@ -38,12 +38,12 @@ public class AppHandler implements IHandler {
         demo.setPrompt("查看演示");
         todo = new Command();
         todo.setId("todo");
-        todo.setPrompt("去表白,格式是 todo: you [like|hate|unlike|love] other");
+        todo.setPrompt("去表白,格式是 todo: you [ignore|like|hate|unlike|love] other");
         exit = new Command();
         exit.setId("exit");
         exit.setPrompt("退出不需要代价哦～");
         init.addCommands(demo, todo, exit);
-        events.add(init);
+        operates.add(init);
 
         //第二个option  //有复用，按需设计
         one = new Option();
@@ -52,13 +52,13 @@ public class AppHandler implements IHandler {
         one.setPrompt("你已经知道怎么做了～");
         demo.setPrompt("再看一次演示，会有不同结果哦");
         one.addCommands(demo, todo, exit);
-        events.add(one);
+        operates.add(one);
 
         //第三个option  //有复用，按需设计
         two = new Option();
         two.setId("two");
-        two.setNextId("one");
-        two.setPrompt("不紧张，还没人知道你来这里了");
+        two.setNextId("thr");
+        two.setPrompt("不紧张，除非喜欢你的人刚好你也喜欢，ta才会知道你在这里说的一切");
         show = new Command();
         show.setId("show");
         show.setPrompt("去看看这里都有谁在");
@@ -66,7 +66,15 @@ public class AppHandler implements IHandler {
         regist.setId("regist");
         regist.setPrompt("留下自己的名字,可以等待被表白哦～ 输入格式是 regist:yourname");
         two.addCommands(show, todo, regist, exit);
-        events.add(two);
+        operates.add(two);
+
+        //第三个option  //有复用，按需设计
+        thr = new Option();
+        thr.setId("thr");
+        thr.setNextId("two");
+        thr.setPrompt("加油啦，就看你说不说了");
+        thr.addCommands(show, todo, regist, exit);
+        operates.add(thr);
 
     }
 
@@ -80,7 +88,7 @@ public class AppHandler implements IHandler {
         channel.configureBlocking(false);
 
         //给客户端发送信息
-        channel.write(toByteBuffer(events.option("init").prompt));
+        channel.write(toByteBuffer(operates.option("init").prompt));
         //在和客户端连接成功之后，为了可以接收到客户端的信息，需要给通道设置读的权限。
         channel.register(key.selector(), SelectionKey.OP_READ);
     }
@@ -110,9 +118,9 @@ public class AppHandler implements IHandler {
         System.out.println(commandId);
         String resultStr;
         if (len > 2) {
-            resultStr = events.invoke(optionId, commandId, addr, clientMsgs[2]) + events.next(optionId).prompt;
+            resultStr = operates.invoke(optionId, commandId, addr, clientMsgs[2]) + operates.next(optionId).prompt;
         } else {
-            resultStr = events.invoke(optionId, commandId, addr) + events.next(optionId).prompt;
+            resultStr = operates.invoke(optionId, commandId, addr) + operates.next(optionId).prompt;
         }
         channel.write(toByteBuffer(resultStr));
     }

@@ -2,6 +2,8 @@ package live.hz.ilike.model;
 
 import com.google.gson.Gson;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: rain
@@ -23,12 +25,33 @@ public class Event {
         this.action = action;
         this.from = from;
         this.to = to;
+        this.time = System.currentTimeMillis();
     }
 
     public Event(Action action, String fromNick, String toNick) {
-        this.action = action;
-        this.from = from;
-        this.to = to;
+        this(action, new Client(fromNick), new Client(toNick));
+    }
+
+    public String match(List<Event> others) {
+        if (others.size() != 0) {
+            for (Event other : others) {
+                Action action = revertAction(other);
+                //返回给客户端信息的过滤条件
+                if (action.toString().equals("love")
+                        || action.toString().equals("like") && action.equals(this.action)) {
+                    return "Congratulation! " + other.getFrom().getNick()
+                            + " also " + action.toString() + " you!";
+                }
+            }
+        }
+        return "Oop！你们没有任何关系，ta没有对你表示相同的感觉，出现过。\n";
+    }
+
+    public Action revertAction(Event other) {
+        if (other.getTo().getNick().equals(this.from.getNick())) {
+            return other.getAction();
+        }
+        return Action.norelation;
     }
 
     public Action getAction() {
@@ -43,8 +66,8 @@ public class Event {
         return to;
     }
 
-    public void setTime(long time) {
-        this.time = time;
+    public long getTime() {
+        return time;
     }
 
     public void setAction(Action action) {
@@ -67,12 +90,14 @@ public class Event {
 
         hate,
 
-        ublike,
+        unlike,
 
-        nothing,
+        ignore,
 
         like,
 
-        love;
+        love,
+
+        norelation;
     }
 }

@@ -2,6 +2,7 @@ package app;
 
 import live.hz.ilike.model.Client;
 import live.hz.ilike.model.Event;
+import live.hz.ilike.server.nio.BaseCallback;
 import live.hz.ilike.util.Log;
 
 /**
@@ -11,7 +12,7 @@ import live.hz.ilike.util.Log;
  * Time: 5:56 PM
  * email: zizihjk@gmail.com，作者是个好人
  */
-public class CallBack {
+public class CallBack extends BaseCallback {
 
     enum From {rian, jack, rose, aaron}
 
@@ -19,15 +20,12 @@ public class CallBack {
 
     enum Action {喜欢, 无视, 不喜欢, 讨厌}
 
-    private Log log;
-
     public CallBack() {
-        this.log = Log.ini();
+        super();
     }
 
     //默认callbak方法的参数都是第一个为ip:port 第二个之后为客户端传入的第三个参数
     public String demo(String addr) {
-        System.out.println("addr: " + addr);
         StringBuffer sb = new StringBuffer("♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥\n");
 
         //默认都一样长
@@ -56,13 +54,24 @@ public class CallBack {
         from.setIp(addrs[0].substring(1));
         from.setPort(addrs[1]);
         Client to = new Client(todos[2]);
+
+        //记录一个event到日志
         Event event = new Event(action, from, to);
+        add(event);//添加到当前运行时的内存中
         log.ilike(event.toJson());
-        return todo;
+
+        return event.match(getFromEvent(to.getNick())) + "\n";
     }
 
-    public String show() {
-        return "show..";
+    public String show(String addr) {
+        StringBuilder sb = new StringBuilder("这些人在这里出现过：\n");
+        int contr = 1;
+        for (Event e : events) {
+            if (contr % 5 == 0) sb.append("\n");
+            sb.append(e.getFrom().getNick() + " ");
+            contr++;
+        }
+        return sb.toString();
     }
 
     public String regist() {

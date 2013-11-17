@@ -10,7 +10,7 @@ import java.util.Map;
  * Time: 7:36 PM
  * email: zizihjk@gmail.com，作者是个好人
  */
-public class Events {
+public class Operates {
 
     public Map<String, Option> events;
 
