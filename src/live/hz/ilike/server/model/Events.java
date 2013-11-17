@@ -29,8 +29,8 @@ public class Events {
         return option(option(optionId).nextId);
     }
 
-    public String invoke(String optionId, String commandId) {
-        return events.get(optionId).invoke(commandId);
+    public String invoke(String optionId, String commandId, String... params) {
+        return events.get(optionId).invoke(commandId, params);
     }
 
 }

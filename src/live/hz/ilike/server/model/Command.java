@@ -26,10 +26,12 @@ public class Command {
         this.id = id;
         this.clzz = CallBack.class;
         //通过id获得method，类型和参数是不安全的，Sorry
-        try {
-            method = clzz.getDeclaredMethod(this.id);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+        Method[] methods = clzz.getDeclaredMethods();
+        for (Method method : methods) {
+            if (method.getName().equals(id)) {
+                this.method = method;
+            }
+
         }
     }
 
@@ -37,9 +39,9 @@ public class Command {
         this.prompt = String.format("[%s]: %s", id, prompt);
     }
 
-    public String invoke() {
+    public String invoke(String... params) {
         try {
-            return method.invoke(clzz.newInstance()).toString();
+            return method.invoke(clzz.newInstance(), params).toString();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -47,6 +49,6 @@ public class Command {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
-        return "err...";
+        return "参数不对";
     }
 }

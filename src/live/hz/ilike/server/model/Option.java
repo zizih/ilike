@@ -32,7 +32,7 @@ public class Option {
             pattern.append("\n" + comm.prompt);
         }
         this.prompt += "\n\n"
-                + "<<<<Step: " + id +">>>>"
+                + "<<<<Step: " + id + ">>>>"
                 + pattern.toString();
     }
 
@@ -48,8 +48,8 @@ public class Option {
         this.nextId = nextId;
     }
 
-    public String invoke(String commId) {
-        return commands.get(commId).invoke();
+    public String invoke(String commId, String... params) {
+        return commands.get(commId).invoke(params);
     }
 
 }
