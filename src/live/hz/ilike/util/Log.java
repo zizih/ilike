@@ -42,10 +42,12 @@ public class Log {
         iRegIni();
     }
 
+    //info 为event的Json字符串
     public void ilike(String info) {
         _like_logger.log(Level.INFO, info);
     }
 
+    //info 为一个nick
     public void iregist(String info) {
         _regist_logger.log(Level.INFO, info);
     }
@@ -54,7 +56,7 @@ public class Log {
         List<Event> events = new ArrayList<Event>();
         try {
             File file = new File("like.log");
-            if (file.exists()) {
+            if (!file.exists()) {
                 FileInputStream fis = new FileInputStream(file);
                 BufferedReader br = new BufferedReader(new InputStreamReader(fis));
                 String line = null;
@@ -71,6 +73,25 @@ public class Log {
             e.printStackTrace();
         }
         return events;
+    }
+
+    public List<String> toNicks() {
+        List<String> nicks = new ArrayList<String>();
+        try {
+            File file = new File("regist.log");
+            if (file.exists()) {
+                FileInputStream fis = new FileInputStream(file);
+                BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    if (line.equals("") || line == "") break;
+                    nicks.add(line);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return nicks;
     }
 
     private void iRegIni() {
@@ -109,7 +130,7 @@ public class Log {
         public String format(LogRecord record) {
             try {
                 Event event = _gson.fromJson(record.getMessage(), Event.class);
-                //return like such: [1384519003991] rain:like:dad
+                //return like such: [1384519003991] rain:like:dad detail:{}
                 return String.format("[%s]%s:%s:%s  detail:%s\n",
                         event.getTime(),
                         event.getFrom().getNick(),
@@ -129,18 +150,9 @@ public class Log {
         @Override
         public String format(LogRecord record) {
             try {
-                Client client = _gson.fromJson(record.getMessage(), Client.class);
-                //return like such: [1384519003991] jack:dios:10.50.9.27:9600
-                return String.format("[%s]%s:%s:%s:$s\n",
-                        record.getMillis(),
-                        client.getNick(),
-                        client.getDesc(),
-                        client.getIp(),
-                        client.getPort());
+                return record.getMessage() + "\n";
             } catch (Exception e) {
-                return String.format("[%s]<<%s>>\n",
-                        record.getMillis(),
-                        "err");
+                return "";
             }
         }
     }

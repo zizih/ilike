@@ -15,16 +15,20 @@ import java.util.List;
  */
 public class BaseCallback {
 
-    protected List<Event> events;
+    protected List<Event> eventsCache;
+    protected List<String> nicksCache;
     protected Log log;
 
     public BaseCallback() {
         log = Log.ini();
-        events = log.toEvents();
+        eventsCache = log.toEvents();
+        nicksCache = log.toNicks();
     }
 
     public void add(Event event) {
-        this.events.add(event);
+        this.eventsCache.add(event);
+        addNick(event.getFrom().getNick());
+        log.ilike(event.toJson());
     }
 
     /**
@@ -34,8 +38,8 @@ public class BaseCallback {
      * @return
      */
     public boolean contains(Event event) {
-        if (this.events == null) return false;
-        for (Event e : this.events) {
+        if (this.eventsCache == null) return false;
+        for (Event e : this.eventsCache) {
             if (e.getFrom().getNick().equals(event.getFrom().getNick())
                     && e.getTo().getNick().equals(event.getTo().getNick())
                     && e.getAction().equals(e.getAction())) {
@@ -52,9 +56,9 @@ public class BaseCallback {
      * @return
      */
     protected List<Event> getFromEvent(String nick) {
-        if (this.events == null) return null;
+        if (this.eventsCache == null) return null;
         List<Event> froms = new ArrayList<Event>();
-        for (Event from : this.events) {
+        for (Event from : this.eventsCache) {
             if (from.getFrom().getNick().equals(nick)) {
                 froms.add(from);
             }
@@ -69,9 +73,9 @@ public class BaseCallback {
      * @return
      */
     protected List<Event> getToEvent(String nick) {
-        if (this.events == null) return null;
+        if (this.eventsCache == null) return null;
         List<Event> tos = new ArrayList<Event>();
-        for (Event to : this.events) {
+        for (Event to : this.eventsCache) {
             if (to.getTo().getNick().equals(nick)) {
                 tos.add(to);
             }
@@ -79,16 +83,32 @@ public class BaseCallback {
         return tos;
     }
 
-
+    /**
+     * 返回不重复的event发起者的名字列表
+     *
+     * @return
+     */
     protected List<String> getFromNicks() {
-        if (this.events == null) return null;
+        if (this.eventsCache == null) return null;
         List<String> nicks = new ArrayList<String>();
-        for (Event e : this.events) {
+        for (Event e : this.eventsCache) {
             if (!nicks.contains(e.getFrom().getNick())) {
                 nicks.add(e.getFrom().getNick());
             }
         }
         return nicks;
+    }
+
+    protected List<String> getNicks() {
+        return this.nicksCache;
+    }
+
+    //更新内存和log
+    protected void addNick(String nick) {
+        if (!nicksCache.contains(nick)) {
+            nicksCache.add(nick.trim());
+            log.iregist(nick);
+        }
     }
 
     /**
@@ -99,9 +119,9 @@ public class BaseCallback {
      * @return
      */
     protected List<Event> getCommonEvents(String fromNick, String toNick) {
-        if (this.events == null) return null;
+        if (this.eventsCache == null) return null;
         List<Event> es = new ArrayList<Event>();
-        for (Event to : this.events) {
+        for (Event to : this.eventsCache) {
             if (to.getFrom().getNick().equals(fromNick)
                     && to.getTo().getNick().equals(toNick)) {
                 es.add(to);
@@ -119,10 +139,10 @@ public class BaseCallback {
      * @return
      */
     protected String verify(String fromNick, Event.Action action, String toNick) {
-        if (this.events == null) return "OK";
+        if (this.eventsCache == null) return "OK";
         List<Event.Action> as = new ArrayList<Event.Action>();
         as.add(action);
-        for (Event e : this.events) {
+        for (Event e : this.eventsCache) {
             if (e.getFrom().getNick().equals(fromNick)
                     && e.getTo().getNick().equals(toNick)) {
                 if (!as.contains(e.getAction())) {

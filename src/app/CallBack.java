@@ -13,11 +13,11 @@ import live.hz.ilike.server.nio.BaseCallback;
  */
 public class CallBack extends BaseCallback {
 
-    enum From {rian, jack, rose, aaron}
+    enum From {rain, jack, rose, aaron}
 
-    enum To {程序员, 文艺青年, 屌丝, 作家}
+    enum To {dios, lucy, ruby, ason}
 
-    enum Action {喜欢, 无视, 不喜欢, 讨厌}
+    enum Action {like, ignore, hate, love}
 
     public CallBack() {
         super();
@@ -71,15 +71,15 @@ public class CallBack extends BaseCallback {
         //检查相似event是否已经记录过
         if (contains(event)) return "对不起你已经说过相同的话了\n";
         add(event);//添加到当前运行时的内存中
-        log.ilike(event.toJson());
 
         return event.match(getFromEvent(to.getNick())) + "\n";
     }
 
+    //反射的时候一起都定位有第一个参数，所以就放这里先，以后日志也用得上的
     public String show(String addr) {
         StringBuilder sb = new StringBuilder("这些人在这里出现过或者故意留下名字暗示你对ta说些什么：\n");
         int contr = 1;
-        for (String nick : getFromNicks()) {
+        for (String nick : getNicks()) {
             if (contr % 5 == 0) sb.append("\n");
             sb.append(nick + " ");
             contr++;
@@ -87,8 +87,9 @@ public class CallBack extends BaseCallback {
         return sb.toString() + "\n";
     }
 
-    public String regist() {
-        return "register";
+    public String regist(String addr, String nick) {
+        addNick(nick);
+        return "名字添加成功\n";
     }
 
     public String exit() {
