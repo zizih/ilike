@@ -3,7 +3,6 @@ package app;
 import live.hz.ilike.model.Client;
 import live.hz.ilike.model.Event;
 import live.hz.ilike.server.nio.BaseCallback;
-import live.hz.ilike.util.Log;
 
 /**
  * Created with IntelliJ IDEA.
@@ -40,8 +39,20 @@ public class CallBack extends BaseCallback {
     }
 
     public String todo(String addr, String todo) {
+        //对客户端返回的约定格式数据进行解析
         String[] todos = todo.trim().split(" ");
-        Event.Action action = Event.Action.valueOf(todos[1]);
+        String fromNick = todos[0];
+        String act = todos[1];
+        String toNick = todos[2];
+
+        //先检查action行为是否冲突
+        Event.Action action = Event.Action.valueOf(act);
+        String result = verify(fromNick, action, toNick);
+        if (!result.equals("OK")) {
+            return result + "\n";
+        }
+
+        //封装对象
         if (todos.length != 3 || !(action instanceof Event.Action)) {
             return "表白句子不对～\n";
         }
@@ -50,13 +61,15 @@ public class CallBack extends BaseCallback {
 
         //构造一个event对象，即发生了一个事件的数据传输对象
         Client from = new Client();
-        from.setNick(todos[0]);
+        from.setNick(fromNick);
         from.setIp(addrs[0].substring(1));
         from.setPort(addrs[1]);
-        Client to = new Client(todos[2]);
+        Client to = new Client(toNick);
 
         //记录一个event到日志
         Event event = new Event(action, from, to);
+        //检查相似event是否已经记录过
+        if (contains(event)) return "对不起你已经说过相同的话了\n";
         add(event);//添加到当前运行时的内存中
         log.ilike(event.toJson());
 
@@ -64,14 +77,14 @@ public class CallBack extends BaseCallback {
     }
 
     public String show(String addr) {
-        StringBuilder sb = new StringBuilder("这些人在这里出现过：\n");
+        StringBuilder sb = new StringBuilder("这些人在这里出现过或者故意留下名字暗示你对ta说些什么：\n");
         int contr = 1;
-        for (Event e : events) {
+        for (String nick : getFromNicks()) {
             if (contr % 5 == 0) sb.append("\n");
-            sb.append(e.getFrom().getNick() + " ");
+            sb.append(nick + " ");
             contr++;
         }
-        return sb.toString();
+        return sb.toString() + "\n";
     }
 
     public String regist() {

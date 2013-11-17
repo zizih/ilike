@@ -49,9 +49,12 @@ public class AppHandler implements IHandler {
         one = new Option();
         one.setId("one");
         one.setNextId("two");
-        one.setPrompt("你已经知道怎么做了～");
+        one.setPrompt("你知道怎么做的～");
         demo.setPrompt("再看一次演示，会有不同结果哦");
-        one.addCommands(demo, todo, exit);
+        show = new Command();
+        show.setId("show");
+        show.setPrompt("去看看这里都有谁在");
+        one.addCommands(demo, todo, show, exit);
         operates.add(one);
 
         //第三个option  //有复用，按需设计
@@ -59,9 +62,6 @@ public class AppHandler implements IHandler {
         two.setId("two");
         two.setNextId("thr");
         two.setPrompt("不紧张，除非喜欢你的人刚好你也喜欢，ta才会知道你在这里说的一切");
-        show = new Command();
-        show.setId("show");
-        show.setPrompt("去看看这里都有谁在");
         regist = new Command();
         regist.setId("regist");
         regist.setPrompt("留下自己的名字,可以等待被表白哦～ 输入格式是 regist:yourname");
@@ -72,7 +72,7 @@ public class AppHandler implements IHandler {
         thr = new Option();
         thr.setId("thr");
         thr.setNextId("two");
-        thr.setPrompt("加油啦，就看你说不说了");
+        thr.setPrompt("加油啦，有勇气就不会遗憾");
         thr.addCommands(show, todo, regist, exit);
         operates.add(thr);
 
@@ -99,14 +99,12 @@ public class AppHandler implements IHandler {
         SocketChannel channel = (SocketChannel) key.channel();
         Socket socket = channel.socket();
         String addr = socket.getInetAddress() + ":" + socket.getPort();
-        System.out.println("hand;ler: " + addr);
 
         // 创建读取的缓冲区
         ByteBuffer buffer = ByteBuffer.allocate(100);
         channel.read(buffer);
         byte[] data = buffer.array();
         String clientMsg = new String(data).trim();
-        System.out.println("Client Said: " + clientMsg);
 
         //把客戶端返回的 optionId:commandId 解析出來
         String[] clientMsgs = clientMsg.split(":");

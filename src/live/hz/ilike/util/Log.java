@@ -38,26 +38,42 @@ public class Log {
     private Log() {
         //Gson util
         _gson = new Gson();
+        ilikeIni();
+        iRegIni();
     }
 
     public void ilike(String info) {
-        if (_like_logger == null && _like_handler == null && _like_formatter == null) {
-            _like_formatter = new LikeFormatter();
-            try {
-                //设置like logger的参数
-                _like_handler = new FileHandler("like.log", true);
-                _like_handler.setFormatter(_like_formatter);
-                _like_logger = Logger.getLogger(Thread.currentThread().getName());
-                _like_logger.addHandler(_like_handler);
-                _like_logger.setLevel(Level.INFO);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         _like_logger.log(Level.INFO, info);
     }
 
     public void iregist(String info) {
+        _regist_logger.log(Level.INFO, info);
+    }
+
+    public List<Event> toEvents() {
+        List<Event> events = new ArrayList<Event>();
+        try {
+            File file = new File("like.log");
+            if (file.exists()) {
+                FileInputStream fis = new FileInputStream(file);
+                BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    if (line.equals("") || line == "") break;
+                    int index = line.indexOf("detail:");
+                    if (index == -1) continue;
+                    String tmp = line.substring(index + "detail:".length());
+                    Event event = _gson.fromJson(tmp, Event.class);
+                    events.add(event);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return events;
+    }
+
+    private void iRegIni() {
         if (_regist_logger == null && _regist_handler == null && _regist_formatter == null) {
             _regist_formatter = new RegistFormatter();
             try {
@@ -71,28 +87,20 @@ public class Log {
                 e.printStackTrace();
             }
         }
-        _regist_logger.log(Level.INFO, info);
     }
 
-    public List<Event> toEvents() {
+    private void ilikeIni() {
+        _like_formatter = new LikeFormatter();
         try {
-            FileInputStream fis = new FileInputStream(new File("like.log"));
-            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-            List<Event> events = new ArrayList<Event>();
-            String line = null;
-            while ((line = br.readLine()) != null) {
-                if (line.equals("") || line == "") break;
-                int index = line.indexOf("detail:");
-                if (index == -1) continue;
-                String tmp = line.substring(index + "detail:".length());
-                Event event = _gson.fromJson(tmp, Event.class);
-                events.add(event);
-            }
-            return events;
+            //设置like logger的参数
+            _like_handler = new FileHandler("like.log", true);
+            _like_handler.setFormatter(_like_formatter);
+            _like_logger = Logger.getLogger(Thread.currentThread().getName());
+            _like_logger.addHandler(_like_handler);
+            _like_logger.setLevel(Level.INFO);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
     }
 
     class LikeFormatter extends Formatter {

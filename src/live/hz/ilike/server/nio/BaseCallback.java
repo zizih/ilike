@@ -28,12 +28,31 @@ public class BaseCallback {
     }
 
     /**
+     * 判断条件是fromNick、action、toNick相同
+     *
+     * @param event
+     * @return
+     */
+    public boolean contains(Event event) {
+        if (this.events == null) return false;
+        for (Event e : this.events) {
+            if (e.getFrom().getNick().equals(event.getFrom().getNick())
+                    && e.getTo().getNick().equals(event.getTo().getNick())
+                    && e.getAction().equals(e.getAction())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * 返回nick作为event的发起者的所有event
      *
      * @param nick
      * @return
      */
     protected List<Event> getFromEvent(String nick) {
+        if (this.events == null) return null;
         List<Event> froms = new ArrayList<Event>();
         for (Event from : this.events) {
             if (from.getFrom().getNick().equals(nick)) {
@@ -50,13 +69,78 @@ public class BaseCallback {
      * @return
      */
     protected List<Event> getToEvent(String nick) {
+        if (this.events == null) return null;
         List<Event> tos = new ArrayList<Event>();
         for (Event to : this.events) {
             if (to.getTo().getNick().equals(nick)) {
                 tos.add(to);
             }
         }
-        return null;
+        return tos;
+    }
+
+
+    protected List<String> getFromNicks() {
+        if (this.events == null) return null;
+        List<String> nicks = new ArrayList<String>();
+        for (Event e : this.events) {
+            if (!nicks.contains(e.getFrom().getNick())) {
+                nicks.add(e.getFrom().getNick());
+            }
+        }
+        return nicks;
+    }
+
+    /**
+     * 返回fromNick和toNick相同的event列表
+     *
+     * @param fromNick
+     * @param toNick
+     * @return
+     */
+    protected List<Event> getCommonEvents(String fromNick, String toNick) {
+        if (this.events == null) return null;
+        List<Event> es = new ArrayList<Event>();
+        for (Event to : this.events) {
+            if (to.getFrom().getNick().equals(fromNick)
+                    && to.getTo().getNick().equals(toNick)) {
+                es.add(to);
+            }
+        }
+        return es;
+    }
+
+    /**
+     * return OK 表示通过
+     * 否则表示action冲突
+     *
+     * @param fromNick
+     * @param toNick
+     * @return
+     */
+    protected String verify(String fromNick, Event.Action action, String toNick) {
+        if (this.events == null) return "OK";
+        List<Event.Action> as = new ArrayList<Event.Action>();
+        as.add(action);
+        for (Event e : this.events) {
+            if (e.getFrom().getNick().equals(fromNick)
+                    && e.getTo().getNick().equals(toNick)) {
+                if (!as.contains(e.getAction())) {
+                    as.add(e.getAction());
+                }
+            }
+        }
+        if ((as.contains(Event.Action.like) || as.contains(Event.Action.love))
+                && as.contains(Event.Action.hate)) {
+            return "Warn: 你不能"
+                    + "对"
+                    + toNick
+                    + "既"
+                    + (as.contains(Event.Action.like) ? Event.Action.like.toString() : Event.Action.love.toString())
+                    + "又"
+                    + Event.Action.hate.toString();
+        }
+        return "OK";
     }
 
 }

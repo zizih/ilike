@@ -44,7 +44,7 @@ public class Event {
                 }
             }
         }
-        return "Oop！你们没有任何关系，ta没有对你表示相同的感觉，出现过。\n";
+        return "Oop！你们没有任何关系，ta没有对你表示相同的感觉，出现过。";
     }
 
     public Action revertAction(Event other) {

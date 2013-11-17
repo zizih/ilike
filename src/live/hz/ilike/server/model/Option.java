@@ -49,7 +49,9 @@ public class Option {
     }
 
     public String invoke(String commId, String... params) {
-        return commands.get(commId).invoke(params);
+        Command comm = commands.get(commId);
+        if (comm == null) return "客户端输入命令有错\n";
+        return comm.invoke(params);
     }
 
 }
