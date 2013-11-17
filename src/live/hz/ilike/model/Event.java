@@ -17,6 +17,8 @@ public class Event {
 
     private Action action;
 
+    private long time;
+
     public Event(Action action, Client from, Client to) {
         this.action = action;
         this.from = from;
@@ -39,6 +41,10 @@ public class Event {
 
     public Client getTo() {
         return to;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 
     public void setAction(Action action) {

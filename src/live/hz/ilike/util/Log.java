@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import live.hz.ilike.model.Client;
 import live.hz.ilike.model.Event;
 
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.*;
 
 /**
@@ -72,18 +74,41 @@ public class Log {
         _regist_logger.log(Level.INFO, info);
     }
 
+    public List<Event> toEvents() {
+        try {
+            FileInputStream fis = new FileInputStream(new File("like.log"));
+            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+            List<Event> events = new ArrayList<Event>();
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                if (line.equals("") || line == "") break;
+                int index = line.indexOf("detail:");
+                if (index == -1) continue;
+                String tmp = line.substring(index + "detail:".length());
+                Event event = _gson.fromJson(tmp, Event.class);
+                events.add(event);
+            }
+            return events;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     class LikeFormatter extends Formatter {
 
         @Override
         public String format(LogRecord record) {
             try {
                 Event event = _gson.fromJson(record.getMessage(), Event.class);
+                event.setTime(record.getMillis());
                 //return like such: [1384519003991] rain:like:dad
-                return String.format("[%s]%s:%s:%s\n",
+                return String.format("[%s]%s:%s:%s  detail:%s\n",
                         record.getMillis(),
                         event.getFrom().getNick(),
                         event.getAction(),
-                        event.getTo().getNick());
+                        event.getTo().getNick(),
+                        record.getMessage());
             } catch (Exception e) {
                 return String.format("[%s]<<%s>>\n",
                         record.getMillis(),

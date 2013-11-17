@@ -53,7 +53,7 @@ public class CallBack {
         //构造一个event对象，即发生了一个事件的数据传输对象
         Client from = new Client();
         from.setNick(todos[0]);
-        from.setIp(addrs[0]);
+        from.setIp(addrs[0].substring(1));
         from.setPort(addrs[1]);
         Client to = new Client(todos[2]);
         Event event = new Event(action, from, to);
