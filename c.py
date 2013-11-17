@@ -26,7 +26,12 @@ def option(str):
 
 while True:
     result = s.recv(1024)
-    print result
+    lines = result.split('\n')
+    for line in lines:
+        if line.startswith('['):
+            print '   ',line
+        else:
+            print line
 
     data = raw_input('>')
     if data.find('exit') != -1:
