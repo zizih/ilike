@@ -25,6 +25,10 @@ public class Events {
         return events.get(optionId);
     }
 
+    public Option next(String optionId) {
+        return option(option(optionId).nextId);
+    }
+
     public String invoke(String optionId, String commandId) {
         return events.get(optionId).invoke(commandId);
     }

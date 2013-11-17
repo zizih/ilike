@@ -20,6 +20,8 @@ public class Option {
 
     public Map<String, Command> commands;
 
+    public String nextId;
+
     public void addCommands(Command... commands) {
         if (this.commands == null) {
             this.commands = new HashMap<String, Command>();
@@ -29,8 +31,8 @@ public class Option {
             this.commands.put(comm.id, comm);
             pattern.append("\n" + comm.prompt);
         }
-        this.prompt += "\n"
-                + "Step: " +id
+        this.prompt += "\n\n"
+                + "<<<<Step: " + id +">>>>"
                 + pattern.toString();
     }
 
@@ -40,6 +42,10 @@ public class Option {
 
     public void setPrompt(String prompt) {
         this.prompt = prompt;
+    }
+
+    public void setNextId(String nextId) {
+        this.nextId = nextId;
     }
 
     public String invoke(String commId) {

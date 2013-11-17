@@ -10,7 +10,7 @@ import java.nio.channels.SelectionKey;
  * Time: 4:10 PM
  * 处理器接口
  */
-interface IHandler {
+public interface IHandler {
     /**
      * 处理SelectionKey=OP_ACCEPT事件
      *

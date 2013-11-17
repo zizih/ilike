@@ -1,5 +1,7 @@
 package live.hz.ilike.server.nio;
 
+import app.AppHandler;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
@@ -75,16 +77,11 @@ public class Server {
         }
     }
 
-
-    /**
-     * 启动服务端测试
-     *
-     * @throws IOException
-     */
-    public static void main(String[] args) throws IOException {
-        Server server = new Server();
-        server.init(8000);
-        server.listen();
+    public void stop() {
+        try {
+            selector.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-
 }

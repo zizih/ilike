@@ -1,6 +1,6 @@
 package live.hz.ilike.server.model;
 
-import live.hz.ilike.server.nio.CallBack;
+import app.CallBack;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,7 +34,7 @@ public class Command {
     }
 
     public void setPrompt(String prompt) {
-        this.prompt = String.format("[%s]:%s", id, prompt);
+        this.prompt = String.format("[%s]: %s", id, prompt);
     }
 
     public String invoke() {
