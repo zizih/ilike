@@ -23,4 +23,4 @@
     >
 
 
-第四天的时候，录了视频在[ilike.ogv](http://zizih.github.io/stayreal/public/video/ilike.ogv)
+第四天的时候，录了视频在[ilike.ogv](http://zizih.github.io/stayreal/#server)
