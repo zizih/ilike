@@ -33,18 +33,24 @@ public class Event {
     }
 
     public String match(List<Event> others) {
+        String ta = null;
         if (others.size() != 0) {
+            ta = others.get(0).getFrom().getNick();
             for (Event other : others) {
                 Action action = revertAction(other);
                 //返回给客户端信息的过滤条件
                 if (action.toString().equals("love")
                         || action.toString().equals("like") && action.equals(this.action)) {
-                    return "Congratulation! " + other.getFrom().getNick()
-                            + " also " + action.toString() + " you!";
+                    return "＠^^＠\n"
+                            + "♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥\n"
+                            + "Congratulation! " + other.getFrom().getNick()
+                            + " also " + action.toString() + " you!\n"
+                            + "♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥";
                 }
             }
         }
-        return "Oop！你们没有任何关系，ta没有对你表示相同的感觉，出现过。";
+        return "●ω●！你们没有任何关系，" + (ta == null ? "ta" : ta)
+                + "没有对你表示相同的感觉,或者尝试替换like和love，说不定就一样了。";
     }
 
     public Action revertAction(Event other) {

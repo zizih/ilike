@@ -15,20 +15,28 @@ import java.util.List;
  */
 public class BaseCallback {
 
-    protected List<Event> eventsCache;
-    protected List<String> nicksCache;
+    protected static List<Event> eventsCache;
+    protected static List<String> nicksCache;
     protected Log log;
 
     public BaseCallback() {
         log = Log.ini();
-        eventsCache = log.toEvents();
-        nicksCache = log.toNicks();
+        eventsCache = log.events();
+        nicksCache = log.nicks();
     }
 
     public void add(Event event) {
         this.eventsCache.add(event);
-        addNick(event.getFrom().getNick());
         log.ilike(event.toJson());
+        //更新内存中的nick
+        add(event.getFrom().getNick());
+    }
+
+    protected void add(String nick) {
+        if (!nicksCache.contains(nick)) {
+            nicksCache.add(nick);
+            log.ilike(nick);
+        }
     }
 
     /**
@@ -42,7 +50,7 @@ public class BaseCallback {
         for (Event e : this.eventsCache) {
             if (e.getFrom().getNick().equals(event.getFrom().getNick())
                     && e.getTo().getNick().equals(event.getTo().getNick())
-                    && e.getAction().equals(e.getAction())) {
+                    && e.getAction().equals(event.getAction())) {
                 return true;
             }
         }
@@ -99,18 +107,6 @@ public class BaseCallback {
         return nicks;
     }
 
-    protected List<String> getNicks() {
-        return this.nicksCache;
-    }
-
-    //更新内存和log
-    protected void addNick(String nick) {
-        if (!nicksCache.contains(nick)) {
-            nicksCache.add(nick.trim());
-            log.iregist(nick);
-        }
-    }
-
     /**
      * 返回fromNick和toNick相同的event列表
      *
@@ -152,7 +148,7 @@ public class BaseCallback {
         }
         if ((as.contains(Event.Action.like) || as.contains(Event.Action.love))
                 && as.contains(Event.Action.hate)) {
-            return "Warn: 你不能"
+            return "⊙ω⊙: 你不能"
                     + "对"
                     + toNick
                     + "既"

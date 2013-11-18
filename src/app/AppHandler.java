@@ -39,10 +39,13 @@ public class AppHandler implements IHandler {
         todo = new Command();
         todo.setId("todo");
         todo.setPrompt("去表白,格式是 todo: you [ignore|like|hate|unlike|love] other");
+        show = new Command();
+        show.setId("show");
+        show.setPrompt("去看看这里都有谁在");
         exit = new Command();
         exit.setId("exit");
         exit.setPrompt("退出不需要代价哦～");
-        init.addCommands(demo, todo, exit);
+        init.addCommands(demo, todo, show,exit);
         operates.add(init);
 
         //第二个option  //有复用，按需设计
@@ -51,9 +54,6 @@ public class AppHandler implements IHandler {
         one.setNextId("two");
         one.setPrompt("你知道怎么做的～");
         demo.setPrompt("再看一次演示，会有不同结果哦");
-        show = new Command();
-        show.setId("show");
-        show.setPrompt("去看看这里都有谁在");
         one.addCommands(demo, todo, show, exit);
         operates.add(one);
 
@@ -112,8 +112,7 @@ public class AppHandler implements IHandler {
         if (len < 2) return;
         String optionId = clientMsgs[0];
         String commandId = clientMsgs[1];
-        System.out.println(optionId);
-        System.out.println(commandId);
+        System.out.println("收到一个命令: " + commandId);
         String resultStr;
         if (len > 2) {
             resultStr = operates.invoke(optionId, commandId, addr, clientMsgs[2]) + operates.next(optionId).prompt;

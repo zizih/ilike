@@ -42,6 +42,7 @@ public class Server {
 
         //init handler
         handler = new AppHandler();
+        System.out.println("服务端启动监听端口: " + port);
     }
 
     /**
@@ -50,7 +51,6 @@ public class Server {
      * @throws IOException
      */
     public void listen() throws IOException {
-        System.out.println("服务端启动成功！");
         // 轮询访问selector
         while (true) {
             //当注册的事件到达时，方法返回；否则,该方法会一直阻塞

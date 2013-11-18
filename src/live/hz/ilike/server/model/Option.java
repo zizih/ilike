@@ -1,7 +1,5 @@
 package live.hz.ilike.server.model;
 
-import live.hz.ilike.server.model.Command;
-
 import java.util.HashMap;
 import java.util.Map;
 

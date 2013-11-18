@@ -15,7 +15,7 @@ public class CallBack extends BaseCallback {
 
     enum From {rain, jack, rose, aaron}
 
-    enum To {dios, lucy, ruby, ason}
+    enum To {dios, lucy, ruby, anson}
 
     enum Action {like, ignore, hate, love}
 
@@ -54,10 +54,10 @@ public class CallBack extends BaseCallback {
 
         //封装对象
         if (todos.length != 3 || !(action instanceof Event.Action)) {
-            return "表白句子不对～\n";
+            return "⊙ω⊙ 表白句子不对～\n";
         }
         String[] addrs = addr.split(":");
-        if (addrs.length != 2) return "服务器错误\n";
+        if (addrs.length != 2) return "☺☺ 服务器错误\n";
 
         //构造一个event对象，即发生了一个事件的数据传输对象
         Client from = new Client();
@@ -69,7 +69,7 @@ public class CallBack extends BaseCallback {
         //记录一个event到日志
         Event event = new Event(action, from, to);
         //检查相似event是否已经记录过
-        if (contains(event)) return "对不起你已经说过相同的话了\n";
+        if (contains(event)) return "●ω●: 你已经说过相同的话了。。\n";
         add(event);//添加到当前运行时的内存中
 
         return event.match(getFromEvent(to.getNick())) + "\n";
@@ -77,9 +77,10 @@ public class CallBack extends BaseCallback {
 
     //反射的时候一起都定位有第一个参数，所以就放这里先，以后日志也用得上的
     public String show(String addr) {
+        if (nicksCache.size() == 0) return "^ ^ ~ 还没有替他人，你是第一个到达这里的人\n";
         StringBuilder sb = new StringBuilder("这些人在这里出现过或者故意留下名字暗示你对ta说些什么：\n");
         int contr = 1;
-        for (String nick : getNicks()) {
+        for (String nick : nicksCache) {
             if (contr % 5 == 0) sb.append("\n");
             sb.append(nick + " ");
             contr++;
@@ -88,8 +89,8 @@ public class CallBack extends BaseCallback {
     }
 
     public String regist(String addr, String nick) {
-        addNick(nick);
-        return "名字添加成功\n";
+        add(nick);
+        return "☺☺ 名字添加成功\n";
     }
 
     public String exit() {
