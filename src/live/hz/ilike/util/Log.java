@@ -38,8 +38,17 @@ public class Log {
     }
 
     //info 为event的Json字符串
-    public void ilike(String info) {
-        _like_logger.log(Level.INFO, info);
+    public void ievent(String info) {
+        _like_logger.log(Level.INFO, "[todo]" + info);
+    }
+
+    //info 为nick字符串
+    public void inick(String info) {
+        _like_logger.log(Level.INFO, "[regist]" + info);
+    }
+
+    public void iwish(String info) {
+        _like_logger.log(Level.INFO, "[wish]" + info);
     }
 
     public List<Event> events() {
@@ -88,6 +97,27 @@ public class Log {
         return _nicks;
     }
 
+    public List<String> wishes() {
+        List<String> _nicks = new ArrayList<String>();
+        try {
+            File file = new File("like.log");
+            if (file.exists()) {
+                FileInputStream fis = new FileInputStream(file);
+                BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    if (line.equals("") || line == "") break;
+                    if (line.startsWith("[wish]")) {
+                        _nicks.add(line.substring("[wish]".length()).trim());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return _nicks;
+    }
+
     private void ilikeIni() {
         _like_formatter = new LikeFormatter();
         try {
@@ -106,18 +136,24 @@ public class Log {
 
         @Override
         public String format(LogRecord record) {
-            try {
-                Event event = _gson.fromJson(record.getMessage(), Event.class);
-                //return like such: [1384519003991] rain:like:dad detail:{}
-                return String.format("[todo]%s:%s:%s  detail:%s\n",
-                        event.getFrom().getNick(),
-                        event.getAction(),
-                        event.getTo().getNick(),
-                        record.getMessage());
-            } catch (Exception e) {
-                return String.format("[regist]%s\n",
-                        record.getMessage());
+            String msg = record.getMessage();
+            if (msg.startsWith("[todo]")) {
+                try {
+                    Event event = _gson.fromJson(msg.substring("[todo]".length()), Event.class);
+                    //return like such: [1384519003991] rain:like:dad detail:{}
+                    return String.format("[todo]%s:%s:%s  detail:%s\n",
+                            event.getFrom().getNick(),
+                            event.getAction(),
+                            event.getTo().getNick(),
+                            msg.substring("[todo]".length()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+            if (msg.startsWith("[regist]") || msg.startsWith("[wish]")) {
+                return msg + "\n";
+            }
+            return "";
         }
     }
 

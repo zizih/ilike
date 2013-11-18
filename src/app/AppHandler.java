@@ -25,8 +25,8 @@ public class AppHandler implements IHandler {
 
     public AppHandler() {
         operates = new Operates();
-        Option init, one, two, thr;
-        Command demo, todo, exit, regist, show;
+        Option init, one, two, thr;      //有这些步骤
+        Command demo, todo, exit, regist, show, wish; //有这些命令
 
         //第一个option
         init = new Option();
@@ -36,16 +36,16 @@ public class AppHandler implements IHandler {
         demo = new Command();
         demo.setId("demo");
         demo.setPrompt("查看演示");
-        todo = new Command();
-        todo.setId("todo");
-        todo.setPrompt("去表白,格式是 todo: you [ignore|like|hate|unlike|love] other");
         show = new Command();
         show.setId("show");
         show.setPrompt("去看看这里都有谁在");
+        wish = new Command();
+        wish.setId("wish");
+        wish.setPrompt("查看对对方使用相同喜欢词语的快乐的人");
         exit = new Command();
         exit.setId("exit");
         exit.setPrompt("退出不需要代价哦～");
-        init.addCommands(demo, todo, show,exit);
+        init.addCommands(demo, show, wish, exit);     //第一个开关拥有的命令
         operates.add(init);
 
         //第二个option  //有复用，按需设计
@@ -54,7 +54,10 @@ public class AppHandler implements IHandler {
         one.setNextId("two");
         one.setPrompt("你知道怎么做的～");
         demo.setPrompt("再看一次演示，会有不同结果哦");
-        one.addCommands(demo, todo, show, exit);
+        todo = new Command();
+        todo.setId("todo");
+        todo.setPrompt("去表白,格式是 todo: you [ignore|like|hate|unlike|love] other");
+        one.addCommands(demo, todo, show, wish,  exit);    //第二个开关拥有的命令
         operates.add(one);
 
         //第三个option  //有复用，按需设计
@@ -65,15 +68,15 @@ public class AppHandler implements IHandler {
         regist = new Command();
         regist.setId("regist");
         regist.setPrompt("留下自己的名字,可以等待被表白哦～ 输入格式是 regist:yourname");
-        two.addCommands(show, todo, regist, exit);
+        two.addCommands(demo,show, todo, regist, wish, exit);
         operates.add(two);
 
         //第三个option  //有复用，按需设计
         thr = new Option();
         thr.setId("thr");
-        thr.setNextId("two");
+        thr.setNextId("one");   //循环复用
         thr.setPrompt("加油啦，有勇气就不会遗憾");
-        thr.addCommands(show, todo, regist, exit);
+        thr.addCommands(show, todo, regist, wish, exit);
         operates.add(thr);
 
     }

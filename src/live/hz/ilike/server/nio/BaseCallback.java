@@ -17,17 +17,19 @@ public class BaseCallback {
 
     protected static List<Event> eventsCache;
     protected static List<String> nicksCache;
+    protected static List<String> wishesCache;
     protected Log log;
 
     public BaseCallback() {
         log = Log.ini();
         eventsCache = log.events();
         nicksCache = log.nicks();
+        wishesCache = log.wishes();
     }
 
     public void add(Event event) {
         this.eventsCache.add(event);
-        log.ilike(event.toJson());
+        log.ievent(event.toJson());
         //更新内存中的nick
         add(event.getFrom().getNick());
     }
@@ -35,7 +37,14 @@ public class BaseCallback {
     protected void add(String nick) {
         if (!nicksCache.contains(nick)) {
             nicksCache.add(nick);
-            log.ilike(nick);
+            log.inick(nick);
+        }
+    }
+
+    protected void addAWish(String wish) {
+        if (!wishesCache.contains(wish)) {
+            wishesCache.add(wish);
+            log.iwish(wish);
         }
     }
 

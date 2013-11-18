@@ -54,10 +54,10 @@ public class CallBack extends BaseCallback {
 
         //封装对象
         if (todos.length != 3 || !(action instanceof Event.Action)) {
-            return "⊙ω⊙ 表白句子不对～\n";
+            return "⊙ ω ⊙ 表白句子不对～\n";
         }
         String[] addrs = addr.split(":");
-        if (addrs.length != 2) return "☺☺ 服务器错误\n";
+        if (addrs.length != 2) return "☺ ☺ 服务器错误\n";
 
         //构造一个event对象，即发生了一个事件的数据传输对象
         Client from = new Client();
@@ -69,10 +69,20 @@ public class CallBack extends BaseCallback {
         //记录一个event到日志
         Event event = new Event(action, from, to);
         //检查相似event是否已经记录过
-        if (contains(event)) return "●ω●: 你已经说过相同的话了。。\n";
+        if (contains(event)) return "● ω ●: 你已经说过相同的话了。。\n";
         add(event);//添加到当前运行时的内存中
 
-        return event.match(getFromEvent(to.getNick())) + "\n";
+        if (event.match(getFromEvent(to.getNick()))) {
+            log.iwish(toNick + " and " + fromNick + " " + act + " each other!");
+            return "＠^^＠\n"
+                    + "♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥\n"
+                    + "Congratulation! " + toNick + " also "
+                    + action.toString() + " you!\n"
+                    + "♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥";
+        }
+        return "● ω ●！你们没有任何关系，"
+                + toNick
+                + "没有对你表示相同的感觉,或者尝试替换like和love，说不定结果就一样了。";
     }
 
     //反射的时候一起都定位有第一个参数，所以就放这里先，以后日志也用得上的
@@ -90,11 +100,19 @@ public class CallBack extends BaseCallback {
 
     public String regist(String addr, String nick) {
         add(nick);
-        return "☺☺ 名字添加成功\n";
+        return "☺ ☺ 名字添加成功\n";
     }
 
-    public String exit() {
-        return "you haved exited";
+    //和命令一一对应的回调
+    public String wish(String addr) {
+        if (wishesCache.size() == 0) return "@ @ 還沒有任何值得慶祝的一對哦～\n";
+        StringBuilder sb = new StringBuilder("恭喜这些对对方用了相同的喜欢的词，love不向下兼容like，也算筛掉了一半彼此喜欢的人，我只能做到这了。\n");
+        int count = -11;
+        for (String wish : wishesCache) {
+            sb.append("  " + count + ".  " + wish);
+            count++;
+        }
+        return sb.toString() + "\n";
     }
 
 }
