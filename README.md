@@ -1,4 +1,4 @@
-在hadoop中，DataNode和NameNode之间的控制信息的交流是通过RPC机制完成的，采用的是动态代理和java NIO，本来是用和iserver一样的SocketServer实现，据说NIO还可以单线程并且非阻塞，就改成NIO了。
+本来是用和iserver一样的SocketServer实现，据说NIO还可以单线程并且非阻塞，就改成NIO了。
 
 
 程序进行到第二天的结果：
@@ -22,3 +22,5 @@
     [todo]:去表白
     >
 
+
+第四天的时候，录了视频在[ilike.ogv](http://zizih.github.io/stayreal/public/video/ilike.ogv)
